@@ -10,6 +10,7 @@
 
 @interface Http : NSObject
 
-- (void)test;
+- (NSDictionary *)post:(NSString *)url withPayload:(NSDictionary *)payload;
+- (NSDictionary *)get:(NSString *)url;
 
 @end

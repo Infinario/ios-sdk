@@ -14,6 +14,13 @@
 		E8F14CAD1A820BB9009B034A /* Http.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F14CAB1A820BB9009B034A /* Http.m */; };
 		E8F14CC41A8210D2009B034A /* Infinario.h in Headers */ = {isa = PBXBuildFile; fileRef = E8F14CC21A8210D2009B034A /* Infinario.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E8F14CC51A8210D2009B034A /* Infinario.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F14CC31A8210D2009B034A /* Infinario.m */; };
+		E8F14D031A821E69009B034A /* DbManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F14D021A821E69009B034A /* DbManager.m */; };
+		E8F14D051A821E81009B034A /* DbManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E8F14D041A821E81009B034A /* DbManager.h */; };
+		E8F14D071A821EEA009B034A /* DbQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F14D061A821EEA009B034A /* DbQueue.m */; };
+		E8F14D091A821EF7009B034A /* DbQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = E8F14D081A821EF7009B034A /* DbQueue.h */; };
+		E8F14D0B1A821FDC009B034A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E8F14D0A1A821FDC009B034A /* libsqlite3.dylib */; };
+		E8F14D0F1A826BF2009B034A /* Preferences.h in Headers */ = {isa = PBXBuildFile; fileRef = E8F14D0D1A826BF2009B034A /* Preferences.h */; };
+		E8F14D101A826BF2009B034A /* Preferences.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F14D0E1A826BF2009B034A /* Preferences.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +44,13 @@
 		E8F14CAB1A820BB9009B034A /* Http.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Http.m; sourceTree = "<group>"; };
 		E8F14CC21A8210D2009B034A /* Infinario.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Infinario.h; sourceTree = "<group>"; };
 		E8F14CC31A8210D2009B034A /* Infinario.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Infinario.m; sourceTree = "<group>"; };
+		E8F14D021A821E69009B034A /* DbManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DbManager.m; sourceTree = "<group>"; };
+		E8F14D041A821E81009B034A /* DbManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DbManager.h; sourceTree = "<group>"; };
+		E8F14D061A821EEA009B034A /* DbQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DbQueue.m; sourceTree = "<group>"; };
+		E8F14D081A821EF7009B034A /* DbQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DbQueue.h; sourceTree = "<group>"; };
+		E8F14D0A1A821FDC009B034A /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		E8F14D0D1A826BF2009B034A /* Preferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Preferences.h; sourceTree = "<group>"; };
+		E8F14D0E1A826BF2009B034A /* Preferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Preferences.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8F14D0B1A821FDC009B034A /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +76,7 @@
 		E8F14C841A820AF0009B034A = {
 			isa = PBXGroup;
 			children = (
+				E8F14D0A1A821FDC009B034A /* libsqlite3.dylib */,
 				E8F14C901A820AF0009B034A /* InfinarioSDK */,
 				E8F14C9D1A820AF0009B034A /* InfinarioSDKTests */,
 				E8F14C8F1A820AF0009B034A /* Products */,
@@ -79,6 +95,12 @@
 		E8F14C901A820AF0009B034A /* InfinarioSDK */ = {
 			isa = PBXGroup;
 			children = (
+				E8F14D081A821EF7009B034A /* DbQueue.h */,
+				E8F14D061A821EEA009B034A /* DbQueue.m */,
+				E8F14D041A821E81009B034A /* DbManager.h */,
+				E8F14D021A821E69009B034A /* DbManager.m */,
+				E8F14D0D1A826BF2009B034A /* Preferences.h */,
+				E8F14D0E1A826BF2009B034A /* Preferences.m */,
 				E8F14C931A820AF0009B034A /* InfinarioSDK.h */,
 				E8F14C911A820AF0009B034A /* Supporting Files */,
 				E8F14CAA1A820BB9009B034A /* Http.h */,
@@ -123,7 +145,10 @@
 			files = (
 				E8F14CAC1A820BB9009B034A /* Http.h in Headers */,
 				E8F14CC41A8210D2009B034A /* Infinario.h in Headers */,
+				E8F14D091A821EF7009B034A /* DbQueue.h in Headers */,
+				E8F14D051A821E81009B034A /* DbManager.h in Headers */,
 				E8F14C941A820AF0009B034A /* InfinarioSDK.h in Headers */,
+				E8F14D0F1A826BF2009B034A /* Preferences.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +250,9 @@
 			files = (
 				E8F14CAD1A820BB9009B034A /* Http.m in Sources */,
 				E8F14CC51A8210D2009B034A /* Infinario.m in Sources */,
+				E8F14D031A821E69009B034A /* DbManager.m in Sources */,
+				E8F14D071A821EEA009B034A /* DbQueue.m in Sources */,
+				E8F14D101A826BF2009B034A /* Preferences.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,6 +438,7 @@
 				E8F14CA61A820AF0009B034A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E8F14CA71A820AF0009B034A /* Build configuration list for PBXNativeTarget "InfinarioSDKTests" */ = {
 			isa = XCConfigurationList;
@@ -418,6 +447,7 @@
 				E8F14CA91A820AF0009B034A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
