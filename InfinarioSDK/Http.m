@@ -33,7 +33,7 @@
 }
 
 - (NSDictionary *)httpRequest:(NSString *)url usingMethod:(NSString *)method withPayload:(NSDictionary *)payload {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.target, url]]];
     NSHTTPURLResponse *response = nil;
     NSError *error = nil;
     NSData *responseData = nil;
@@ -50,8 +50,6 @@
     }
     
     responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    
-    NSLog(@"HTTP response: %@", response);
     
     if (responseData) {
         return (NSDictionary *) [NSJSONSerialization JSONObjectWithData:responseData options:0 error:nil];

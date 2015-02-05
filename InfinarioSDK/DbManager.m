@@ -9,6 +9,8 @@
 #import "DbManager.h"
 #import "sqlite3.h"
 
+NSString *const DB_FILE = @"sampledb.sql";
+
 @interface DbManager()
 
 @property (nonatomic, strong) NSString *documentsDirectory;
@@ -27,7 +29,7 @@
     
     if (self) {
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        self.documentsDirectory = [paths objectAtIndex:0];
+        self.documentsDirectory = paths[0];
         self.databaseFilename = dbFilename;
         [self copyDatabaseIntoDocumentsDirectory];
     }

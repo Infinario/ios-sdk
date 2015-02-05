@@ -7,7 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DbManager.h"
 
 @interface Preferences : NSObject
+
+- (id)objectForKey:(NSString *)key;
+- (void)setObject:(id)value forKey:(NSString *)key;
 
 @end

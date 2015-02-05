@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString *const DB_FILE;
+
 @interface DbManager : NSObject
 
 @property (nonatomic, strong) NSMutableArray *arrColumnNames;

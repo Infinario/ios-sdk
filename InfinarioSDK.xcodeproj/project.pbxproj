@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E8843C011A83613900AFD411 /* CommandManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E8843BFF1A83613900AFD411 /* CommandManager.h */; };
+		E8843C021A83613900AFD411 /* CommandManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E8843C001A83613900AFD411 /* CommandManager.m */; };
+		E8843C051A83654100AFD411 /* Command.h in Headers */ = {isa = PBXBuildFile; fileRef = E8843C031A83654100AFD411 /* Command.h */; };
+		E8843C061A83654100AFD411 /* Command.m in Sources */ = {isa = PBXBuildFile; fileRef = E8843C041A83654100AFD411 /* Command.m */; };
+		E8843C091A839CDA00AFD411 /* Customer.h in Headers */ = {isa = PBXBuildFile; fileRef = E8843C071A839CDA00AFD411 /* Customer.h */; };
+		E8843C0A1A839CDA00AFD411 /* Customer.m in Sources */ = {isa = PBXBuildFile; fileRef = E8843C081A839CDA00AFD411 /* Customer.m */; };
+		E8843C0D1A839E7100AFD411 /* Event.h in Headers */ = {isa = PBXBuildFile; fileRef = E8843C0B1A839E7100AFD411 /* Event.h */; };
+		E8843C0E1A839E7100AFD411 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = E8843C0C1A839E7100AFD411 /* Event.m */; };
 		E8F14C941A820AF0009B034A /* InfinarioSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = E8F14C931A820AF0009B034A /* InfinarioSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E8F14C9A1A820AF0009B034A /* InfinarioSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8F14C8E1A820AF0009B034A /* InfinarioSDK.framework */; };
 		E8F14CA11A820AF0009B034A /* InfinarioSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E8F14CA01A820AF0009B034A /* InfinarioSDKTests.m */; };
@@ -34,6 +42,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E8843BFF1A83613900AFD411 /* CommandManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandManager.h; sourceTree = "<group>"; };
+		E8843C001A83613900AFD411 /* CommandManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandManager.m; sourceTree = "<group>"; };
+		E8843C031A83654100AFD411 /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
+		E8843C041A83654100AFD411 /* Command.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Command.m; sourceTree = "<group>"; };
+		E8843C071A839CDA00AFD411 /* Customer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Customer.h; sourceTree = "<group>"; };
+		E8843C081A839CDA00AFD411 /* Customer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Customer.m; sourceTree = "<group>"; };
+		E8843C0B1A839E7100AFD411 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		E8843C0C1A839E7100AFD411 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
 		E8F14C8E1A820AF0009B034A /* InfinarioSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = InfinarioSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8F14C921A820AF0009B034A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E8F14C931A820AF0009B034A /* InfinarioSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InfinarioSDK.h; sourceTree = "<group>"; };
@@ -107,6 +123,14 @@
 				E8F14CAB1A820BB9009B034A /* Http.m */,
 				E8F14CC21A8210D2009B034A /* Infinario.h */,
 				E8F14CC31A8210D2009B034A /* Infinario.m */,
+				E8843BFF1A83613900AFD411 /* CommandManager.h */,
+				E8843C001A83613900AFD411 /* CommandManager.m */,
+				E8843C031A83654100AFD411 /* Command.h */,
+				E8843C041A83654100AFD411 /* Command.m */,
+				E8843C071A839CDA00AFD411 /* Customer.h */,
+				E8843C081A839CDA00AFD411 /* Customer.m */,
+				E8843C0B1A839E7100AFD411 /* Event.h */,
+				E8843C0C1A839E7100AFD411 /* Event.m */,
 			);
 			path = InfinarioSDK;
 			sourceTree = "<group>";
@@ -147,7 +171,11 @@
 				E8F14CC41A8210D2009B034A /* Infinario.h in Headers */,
 				E8F14D091A821EF7009B034A /* DbQueue.h in Headers */,
 				E8F14D051A821E81009B034A /* DbManager.h in Headers */,
+				E8843C011A83613900AFD411 /* CommandManager.h in Headers */,
 				E8F14C941A820AF0009B034A /* InfinarioSDK.h in Headers */,
+				E8843C091A839CDA00AFD411 /* Customer.h in Headers */,
+				E8843C0D1A839E7100AFD411 /* Event.h in Headers */,
+				E8843C051A83654100AFD411 /* Command.h in Headers */,
 				E8F14D0F1A826BF2009B034A /* Preferences.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,8 +279,12 @@
 				E8F14CAD1A820BB9009B034A /* Http.m in Sources */,
 				E8F14CC51A8210D2009B034A /* Infinario.m in Sources */,
 				E8F14D031A821E69009B034A /* DbManager.m in Sources */,
+				E8843C0E1A839E7100AFD411 /* Event.m in Sources */,
+				E8843C061A83654100AFD411 /* Command.m in Sources */,
 				E8F14D071A821EEA009B034A /* DbQueue.m in Sources */,
 				E8F14D101A826BF2009B034A /* Preferences.m in Sources */,
+				E8843C021A83613900AFD411 /* CommandManager.m in Sources */,
+				E8843C0A1A839CDA00AFD411 /* Customer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Infinario.h"
 
 //! Project version number for InfinarioSDK.
 FOUNDATION_EXPORT double InfinarioSDKVersionNumber;

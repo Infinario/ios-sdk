@@ -22,7 +22,7 @@ static int const POP_LIMIT = 50;
 - (instancetype) init {
     self = [super init];
     
-    self.dbManager = [[DbManager alloc] initWithDatabaseFilename: @"sampledb.sql"];
+    self.dbManager = [[DbManager alloc] initWithDatabaseFilename: DB_FILE];
     [self createDbIfNecessary];
     
     return self;
@@ -36,20 +36,20 @@ static int const POP_LIMIT = 50;
 
 - (NSArray *) pop:(int) limit {
     NSMutableArray *requests = [[NSMutableArray alloc] init];
-    NSDictionary *request;
-    NSDictionary *commandData;
+    NSMutableDictionary *request;
+    NSMutableDictionary *commandData;
     NSData *data;
     
     NSArray *commands = [self.dbManager loadDataFromDb:[NSString stringWithFormat:@"SELECT * FROM commands LIMIT %d;", limit]];
 
     for (NSMutableArray *command in commands) {
-        data = [[command objectAtIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
-        commandData =[NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        data = [command[1] dataUsingEncoding:NSUTF8StringEncoding];
+        commandData =[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         
-        request = @{
-            @"id": [command objectAtIndex:0],
-            @"command": commandData
-        };
+        request = [[NSMutableDictionary alloc] init];
+        
+        request[@"id"] = command[0];
+        request[@"command"] = commandData;
         
         [requests addObject:request];
     }
@@ -64,7 +64,7 @@ static int const POP_LIMIT = 50;
 - (BOOL) isEmpty {
     NSArray *result = [self.dbManager loadDataFromDb:@"SELECT COUNT(*) FROM commands;"];
 
-    return [[[result objectAtIndex:0] objectAtIndex:0] isEqualToString:@"0"];
+    return [result[0][0] isEqualToString:@"0"];
 }
 
 - (void) clear:(NSArray *)successfull andFailed:(NSArray *)failed {
