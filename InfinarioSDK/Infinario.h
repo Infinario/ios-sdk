@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface Infinario : NSObject
 
@@ -22,6 +23,8 @@
 - (void)identifyWithCustomerDict:(NSMutableDictionary *)customer;
 - (void)identifyWithCustomer:(NSString *)customer;
 
+- (void)unidentify;
+
 - (void)update:(NSDictionary *)properties;
 
 - (void)track:(NSString *)type withProperties:(NSDictionary *)properties withTimestamp:(NSNumber *)timestamp;
@@ -30,6 +33,8 @@
 - (void)track:(NSString *)type;
 
 - (void)flush;
+
+- (void)enablePushNotifications;
 
 - (void)test;
 

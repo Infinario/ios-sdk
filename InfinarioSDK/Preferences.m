@@ -37,6 +37,11 @@
     [self save:self.prefs];
 }
 
+- (void)removeObjectForKey:(NSString *)key {
+    [self.prefs removeObjectForKey:key];
+    [self save:self.prefs];
+}
+
 - (NSMutableDictionary *)load {
     NSArray *prefsArray = [self.dbManager loadDataFromDb:@"SELECT * FROM preferences;"];
     NSMutableDictionary *prefs = [[NSMutableDictionary alloc] init];

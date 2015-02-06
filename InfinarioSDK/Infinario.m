@@ -12,6 +12,9 @@
 #import "Event.h"
 #import "CommandManager.h"
 
+int const FLUSH_COUNT = 50;
+double const FLUSH_DELAY = 10.0;
+
 @interface Infinario ()
 
 @property NSString *token;
@@ -20,6 +23,10 @@
 @property CommandManager *commandManager;
 @property Preferences *preferences;
 @property BOOL identified;
+@property int commandCounter;
+@property (nonatomic) BOOL automaticFlushing;
+@property NSTimer *flushTimer;
+@property UIBackgroundTaskIdentifier task;
 
 @end
 
@@ -30,10 +37,23 @@
     
     self.token = token;
     self.target = target ? target : @"https://api.infinario.com";
-    self.identified = NO;
     
-    self.commandManager = [[CommandManager alloc] initWithTarget:target];
+    self.commandManager = [[CommandManager alloc] initWithTarget:self.target];
     self.preferences = [[Preferences alloc] init];
+    
+    self.identified = NO;
+    self.customer = nil;
+    self.commandCounter = FLUSH_COUNT;
+    self.task = UIBackgroundTaskInvalid;
+    
+    id autoFlushing = [self.preferences objectForKey:@"automatic_flushing"];
+    
+    if (autoFlushing != nil) {
+        _automaticFlushing = [autoFlushing boolValue];
+    }
+    else {
+        self.automaticFlushing = YES;
+    }
     
     if (customer) [self identifyWithCustomerDict:customer];
     
@@ -105,6 +125,12 @@
     [self identifyWithCustomer:customer andUpdate:nil];
 }
 
+- (void)unidentify {
+    [self.preferences removeObjectForKey:@"cookie"];
+    self.identified = NO;
+    self.customer = nil;
+}
+
 - (void)update:(NSDictionary *)properties {
     if (!self.identified) [self identifyWithCustomer:nil];
     
@@ -112,7 +138,7 @@
     
     [self.commandManager schedule:customer];
     
-    // TODO: handle automatic flushing;
+    if (self.automaticFlushing) [self setupDelayedFlush];
 }
 
 - (void)track:(NSString *)type withProperties:(NSDictionary *)properties withTimestamp:(NSNumber *)timestamp {
@@ -122,7 +148,7 @@
     
     [self.commandManager schedule:event];
     
-    // TODO: handle automatic flushing;
+    if (self.automaticFlushing) [self setupDelayedFlush];
 }
 
 - (void)track:(NSString *)type withProperties:(NSDictionary *)properties {
@@ -138,8 +164,30 @@
 }
 
 - (void)flush {
-    // TODO: handle background task;
-    [self.commandManager flush];
+    [self ensureBackgroundTask];
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.commandManager flush];
+        [self ensureBackgroundTaskFinished];
+    });
+}
+
+- (void)ensureBackgroundTask {
+    UIApplication *app = [UIApplication sharedApplication];
+    
+    if (self.task == UIBackgroundTaskInvalid) {
+        self.task = [app beginBackgroundTaskWithExpirationHandler:^{
+            [app endBackgroundTask:self.task];
+            self.task = UIBackgroundTaskInvalid;
+        }];
+    }
+}
+
+- (void)ensureBackgroundTaskFinished {
+    if (self.task != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask:self.task];
+        self.task = UIBackgroundTaskInvalid;
+    }
 }
 
 - (NSString *)getCookie {
@@ -156,23 +204,68 @@
     return cookie;
 }
 
+- (void)setupDelayedFlush {
+    if (self.commandCounter > 0) {
+        self.commandCounter--;
+        [self startFlushTimer];
+    }
+    else {
+        self.commandCounter = FLUSH_COUNT;
+        [self stopFlushTimer];
+        [self flush];
+    }
+}
+
+- (void)setAutomaticFlushing:(BOOL)automaticFlushing {
+    [self.preferences setObject:[NSNumber numberWithBool:automaticFlushing] forKey:@"automatic_flushing"];
+    _automaticFlushing = automaticFlushing;
+}
+
+- (void)enableAutomaticFlushing {
+    self.automaticFlushing = YES;
+}
+
+- (void)disableAutomaticFlushing {
+    self.automaticFlushing = NO;
+}
+
+- (void)startFlushTimer {
+    [self stopFlushTimer];
+    [self ensureBackgroundTask];
+    
+    self.flushTimer = [NSTimer scheduledTimerWithTimeInterval:FLUSH_DELAY target:self selector:@selector(onFlushTimer:) userInfo:nil repeats:NO];
+}
+
+- (void)stopFlushTimer {
+    if (self.flushTimer) {
+        [self.flushTimer invalidate];
+        self.flushTimer = nil;
+    }
+}
+
+- (void)onFlushTimer:(NSTimer *)timer {
+    if (self.automaticFlushing) [self flush];
+    
+    [self ensureBackgroundTaskFinished];
+}
+
+- (void)enablePushNotifications {
+    UIUserNotificationType types = UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound;
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+}
+
 - (void)test {
-    NSLog(@"vypise nieco z infinario classy");
+    NSLog(@"Testing Infinario class");
     
-    Preferences *prefs = [[Preferences alloc] init];
-    CommandManager *commandManager = [[CommandManager alloc] initWithTarget:@"http://10.0.1.58:5001"];
+    NSString *token = @"b7746130-a22d-11e4-878d-ac9e17ec6d2c";
+    NSString *target = @"http://10.0.1.58:5001";
     
-    NSString *cookie = [prefs objectForKey:@"cookie"];
-    NSLog(@"Cookie: %@", cookie);
-    
-    [prefs setObject:@"haluz" forKey:@"cookie"];
-    
-    NSString *projectId = @"b7746130-a22d-11e4-878d-ac9e17ec6d2c";
-    
-    Event *e = [[Event alloc] initWithIds:@{@"cookie": @"jyufuh"} andProjectId:projectId andWithType:@"iostest" andWithProperties:@{@"a":@1} andWithTimestamp:@(86400*4)];
-    
-    [commandManager schedule:e];
-    [commandManager flush];
+    Infinario *infinario = [Infinario sharedInstanceWithToken:token andWithTarget:target andWithCustomer:@"ios_customer"];
+
+    [infinario update:@{@"prop1": @"val2"}];
+    [infinario track:@"InfinarioTested2" withProperties:@{@"testKey": @"testVal"}];
 }
 
 @end
