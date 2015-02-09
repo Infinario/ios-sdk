@@ -34,8 +34,7 @@
 
 - (void)flush;
 
-- (void)enablePushNotifications;
-
-- (void)test;
+- (void)registerPushNotifications;
+- (void)addPushNotificationsToken:(NSData *)token;
 
 @end

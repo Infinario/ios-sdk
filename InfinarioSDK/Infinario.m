@@ -249,23 +249,15 @@ double const FLUSH_DELAY = 10.0;
     [self ensureBackgroundTaskFinished];
 }
 
-- (void)enablePushNotifications {
+- (void)registerPushNotifications {
     UIUserNotificationType types = UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound;
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:types categories:nil];
     [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
-- (void)test {
-    NSLog(@"Testing Infinario class");
-    
-    NSString *token = @"b7746130-a22d-11e4-878d-ac9e17ec6d2c";
-    NSString *target = @"http://10.0.1.58:5001";
-    
-    Infinario *infinario = [Infinario sharedInstanceWithToken:token andWithTarget:target andWithCustomer:@"ios_customer"];
-
-    [infinario update:@{@"prop1": @"val2"}];
-    [infinario track:@"InfinarioTested2" withProperties:@{@"testKey": @"testVal"}];
+- (void)addPushNotificationsToken:(NSData *)token {
+    [self update:@{@"__ios_device_token": [[NSString alloc] initWithData:token encoding:NSUTF8StringEncoding]}];
 }
 
 @end
