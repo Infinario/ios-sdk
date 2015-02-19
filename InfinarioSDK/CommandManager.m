@@ -9,6 +9,8 @@
 #import "CommandManager.h"
 #import "DbQueue.h"
 #import "Http.h"
+#import "Preferences.h"
+
 
 int const MAX_RETRIES = 50;
 
@@ -16,16 +18,20 @@ int const MAX_RETRIES = 50;
 
 @property DbQueue *dbQueue;
 @property Http *http;
+@property NSString *token;
+@property Preferences *preferences;
 
 @end
 
 @implementation CommandManager
 
-- (instancetype)initWithTarget:(NSString *)target {
+- (instancetype)initWithTarget:(NSString *)target andWithToken:(NSString *)token {
     self = [super init];
     
     self.dbQueue = [[DbQueue alloc] init];
     self.http = [[Http alloc] initWithTarget: target];
+    self.token = token;
+    self.preferences = [Preferences sharedInstance];
     
     return self;
 }
@@ -59,7 +65,61 @@ int const MAX_RETRIES = 50;
     }
 }
 
+- (void)setCookieId:(NSMutableDictionary *)command {
+    if (command[@"data"] && command[@"data"][@"ids"] && ![command[@"data"][@"ids"][@"cookie"] length]) {
+        command[@"data"][@"ids"][@"cookie"] = [self.preferences objectForKey:@"cookie"];
+    }
+    
+    if (command[@"data"] && command[@"data"][@"customer_ids"] && ![command[@"data"][@"customer_ids"][@"cookie"] length]) {
+        command[@"data"][@"customer_ids"][@"cookie"] = [self.preferences objectForKey:@"cookie"];
+    }
+}
+
+- (BOOL)ensureCookieId {
+    NSString *cookie = [self.preferences objectForKey:@"cookie" withDefault:@""];
+    
+    if ([cookie isEqualToString:@""]) {
+        [self.preferences setObject:@"negotiating" forKey:@"cookie"];
+        
+        CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
+        cookie = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+        CFRelease(uuid);
+        
+        NSDictionary *response = [self.http post:@"crm/customers/track" withPayload:@{
+            @"ids": @{@"cookie": cookie},
+            @"project_id": self.token,
+            @"device": @{
+                @"os_name": @"iOS",
+                @"os_version": [[UIDevice currentDevice] systemVersion],
+                @"device_model": [[UIDevice currentDevice] model]
+            }
+        }];
+        
+        if (response) {
+            cookie = response[@"data"][@"ids"][@"cookie"];
+            NSLog(@"Negotiated cookie id");
+            [self.preferences setObject:cookie forKey:@"cookie"];
+            
+            return YES;
+        }
+        
+        [self.preferences removeObjectForKey:@"cookie"];
+        
+        return NO;
+    }
+    else if ([cookie isEqualToString:@"negotiating"]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (BOOL)executeBatch {
+    if (![self ensureCookieId]) {
+        NSLog(@"Failed to negotiate cookie id.");
+        return NO;
+    }
+    
     NSMutableSet *successful = [[NSMutableSet alloc] init];
     NSMutableSet *failed = [[NSMutableSet alloc] init];
     NSArray *requests = [self.dbQueue pop];
@@ -72,6 +132,7 @@ int const MAX_RETRIES = 50;
     
     for (NSDictionary *req in requests) {
         [self setAge:req[@"command"]];
+        [self setCookieId:req[@"command"]];
         [commands addObject:req[@"command"]];
         [failed addObject:req[@"id"]];
     }

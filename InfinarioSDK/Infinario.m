@@ -11,6 +11,7 @@
 #import "Customer.h"
 #import "Event.h"
 #import "CommandManager.h"
+#import "Http.h"
 
 int const FLUSH_COUNT = 50;
 double const FLUSH_DELAY = 10.0;
@@ -36,24 +37,19 @@ double const FLUSH_DELAY = 10.0;
     self = [super init];
     
     self.token = token;
-    self.target = target ? target : @"https://api.infinario.com";
+    self.target = target;
     
-    self.commandManager = [[CommandManager alloc] initWithTarget:self.target];
-    self.preferences = [[Preferences alloc] init];
+    self.commandManager = [[CommandManager alloc] initWithTarget:self.target andWithToken:self.token];
+    self.preferences = [Preferences sharedInstance];
+    
+    [self.preferences removeObjectForKey:@"cookie"];
     
     self.identified = NO;
     self.customer = nil;
     self.commandCounter = FLUSH_COUNT;
     self.task = UIBackgroundTaskInvalid;
     
-    id autoFlushing = [self.preferences objectForKey:@"automatic_flushing"];
-    
-    if (autoFlushing != nil) {
-        _automaticFlushing = [autoFlushing boolValue];
-    }
-    else {
-        self.automaticFlushing = YES;
-    }
+    _automaticFlushing = [[self.preferences objectForKey:@"automatic_flushing" withDefault:@YES] boolValue];
     
     if (customer) [self identifyWithCustomerDict:customer];
     
@@ -103,9 +99,7 @@ double const FLUSH_DELAY = 10.0;
 }
 
 - (void)identifyWithCustomerDict:(NSMutableDictionary *)customer andUpdate:(NSDictionary *)properties {
-    if (!(customer[@"cookie"] && [customer[@"cookie"] length])) {
-        customer[@"cookie"] = [self getCookie];
-    }
+    customer[@"cookie"] = [self getCookie];
     
     self.customer = customer;
     self.identified = YES;
@@ -192,13 +186,9 @@ double const FLUSH_DELAY = 10.0;
 
 - (NSString *)getCookie {
     NSString *cookie = [self.preferences objectForKey:@"cookie"];
-    
-    if (!cookie) {
-        CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
-        cookie = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
-        CFRelease(uuid);
-        
-        [self.preferences setObject:cookie forKey:@"cookie"];
+
+    if (!cookie || [cookie isEqualToString:@"negotiating"]) {
+        return @"";
     }
     
     return cookie;
@@ -257,7 +247,9 @@ double const FLUSH_DELAY = 10.0;
 }
 
 - (void)addPushNotificationsToken:(NSData *)token {
-    [self update:@{@"__ios_device_token": [[NSString alloc] initWithData:token encoding:NSUTF8StringEncoding]}];
+    NSString *stringToken = [[token description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+    stringToken = [stringToken stringByReplacingOccurrencesOfString:@" " withString:@""];
+    [self update:@{@"__ios_device_token": stringToken}];
 }
 
 @end

@@ -23,8 +23,6 @@
 - (void)identifyWithCustomerDict:(NSMutableDictionary *)customer;
 - (void)identifyWithCustomer:(NSString *)customer;
 
-- (void)unidentify;
-
 - (void)update:(NSDictionary *)properties;
 
 - (void)track:(NSString *)type withProperties:(NSDictionary *)properties withTimestamp:(NSNumber *)timestamp;

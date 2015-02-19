@@ -19,7 +19,7 @@
 - (instancetype)initWithTarget:(NSString *)target {
     self = [super init];
     
-    self.target = target;
+    self.target = target ? target : @"https://api.infinario.com";
     
     return self;
 }

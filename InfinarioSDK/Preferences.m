@@ -28,18 +28,44 @@
     return self;
 }
 
++ (id)sharedInstance {
+    static dispatch_once_t p = 0;
+    
+    __strong static id _sharedObject = nil;
+    
+    dispatch_once(&p, ^{
+        _sharedObject = [[self alloc] init];
+    });
+    
+    return _sharedObject;
+}
+
 - (id)objectForKey:(NSString *)key {
-    return [self.prefs objectForKey:key];
+    return self.prefs[key];
+}
+
+- (id)objectForKey:(NSString *)key withDefault:(id)defaultValue {
+    id value = [self objectForKey:key];
+    
+    if (!value) {
+        return defaultValue;
+    }
+    
+    return value;
 }
 
 - (void)setObject:(id)value forKey:(NSString *)key {
-    [self.prefs setValue:value forKey:key];
-    [self save:self.prefs];
+    if (value && key) {
+        [self.prefs setValue:value forKey:key];
+        [self save:self.prefs];
+    }
 }
 
 - (void)removeObjectForKey:(NSString *)key {
-    [self.prefs removeObjectForKey:key];
-    [self save:self.prefs];
+    if (key) {
+        [self.prefs removeObjectForKey:key];
+        [self save:self.prefs];
+    }
 }
 
 - (NSMutableDictionary *)load {

@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "Command.h"
 
 @interface CommandManager : NSObject
 
-- (instancetype)initWithTarget:(NSString *)target;
+- (instancetype)initWithTarget:(NSString *)target andWithToken:(NSString *)token;
 - (void)schedule:(Command *)command;
 - (void)flush;
 

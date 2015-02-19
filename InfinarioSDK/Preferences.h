@@ -11,7 +11,10 @@
 
 @interface Preferences : NSObject
 
++ (id)sharedInstance;
+
 - (id)objectForKey:(NSString *)key;
+- (id)objectForKey:(NSString *)key withDefault:(id)defaultValue;
 - (void)setObject:(id)value forKey:(NSString *)key;
 - (void)removeObjectForKey:(NSString *)key;
 
