@@ -42,8 +42,6 @@ double const FLUSH_DELAY = 10.0;
     self.commandManager = [[CommandManager alloc] initWithTarget:self.target andWithToken:self.token];
     self.preferences = [Preferences sharedInstance];
     
-    [self.preferences removeObjectForKey:@"cookie"];
-    
     self.identified = NO;
     self.customer = nil;
     self.commandCounter = FLUSH_COUNT;
