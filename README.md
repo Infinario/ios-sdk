@@ -62,6 +62,83 @@ NSNumber *timestamp = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1
 // Store customer's age
 [infinario update:properties];
 </code></pre>
+
+<h2>Automatic events</h2>
+<p>
+INFINARIO iOS SDK automatically tracks some events on its own. Automatic events ensure that basic user data gets tracked with as little effort as just including the SDK into your game. Automatic events include sessions, installation, identification and payments tracking.
+</p>
+
+<h3>Sessions</h3>
+<p>
+Session is a time spent in the game, it starts when the game is launched and ends when the game gets dismissed and is freed from memory. Automatic tracking of sessions produces two events, <code>session_start</code> and <code>session_end</code>. Both events contain the timestamp of the occurence together with basic attributes about the device (OS, OS version, SDK, SDK version and device model). Event <code>session_end</code> contains also the duration of the session in seconds. Example of <code>session_end</code> event attributes in <em>JSON</em> format:
+</p>
+
+<pre><code>{
+  "duration": 125,
+  "device_model": "iPhone",
+  "ip": "10.0.1.58",
+  "os_name": "iOS",
+  "os_version": "8.1.0",
+  "sdk": "iOS SDK",
+  "sdk_version": "1.0.4"
+}
+</code></pre>
+
+<h3>Installation</h3>
+
+<p>
+Installation event is fired <strong>only once</strong> for the whole lifetime of the game on one device when the game is launched for the first time. Besides the basic information about the device (OS, OS version, SDK, SDK version and device model), it also contains additional attribute called <strong>campaign_id</strong> which identifies the source of the installation. For more information about this topic, please refer to the <a href="http://guides.infinario.com/user-guide/acquisition/">aquisition documentation</a>. Example of installation event:
+</p>
+
+<pre><code>{
+  "campaign": "Advertisement on my website",
+  "campaign_id": "ui9fj4i93jf9083094fj9043",
+  "link": "https://itunes.apple.com/us/...",
+  "device_model": "iPhone",
+  "ip": "10.0.1.58",
+  "os_name": "iOS",
+  "os_version": "8.1.0",
+  "sdk": "iOS SDK",
+  "sdk_version": "1.0.4"
+}
+</code></pre>
+
+<h3>Identification</h3>
+
+<p>
+Identification event is tracked each time the <code>identify()</code> method is called. It contains all basic information regarding the device (OS, OS version, SDK, SDK version and device model) as well as <strong>registered</strong> attribute which identifies the player. Example of an identification event:
+</p>
+
+<pre><code>{
+  "registered": "player@email.com",
+  "device_model": "iPhone",
+  "ip": "10.0.1.58",
+  "os_name": "iOS",
+  "os_version": "8.1.0",
+  "sdk": "iOS SDK",
+  "sdk_version": "1.0.4"
+}
+</code></pre>
+
+<h3>Payments</h3>
+
+<p>
+INFINARIO iOS SDK automatically tracks all payments made in the game as the SDK instance listens on <code>[SKPaymentQueue defaultQueue]</code> for successful transactions. Purchase events (called <code>hard_purchase</code>) contain all basic information about the device (OS, OS version, SDK, SDK version and device model) combined with additional purchase attributes <strong>brutto</strong>, <strong>item_id</strong> and <strong>item_title</strong>. <strong>Brutto</strong> attribute contains price paid by the player. Attribute <strong>item_title</strong> consists of human-friendly name of the bought item (e.g. Silver sword) and <strong>item_id</strong> corresponds to the product identifier for the in-app purchase as defined in your iTunes Connect console. Example of purchase event: 
+</p>
+
+<pre><code>{
+  "brutto": 0.911702,
+  "item_id": "silver.sword",
+  "item_title": "Silver sword",
+  "device_model": "iPhone",
+  "ip": "10.0.1.58",
+  "os_name": "iOS",
+  "os_version": "8.1.0",
+  "sdk": "iOS SDK",
+  "sdk_version": "1.0.4"
+}
+</code></pre>
+
 <h2>Push notifications</h2>
 <p style="text-align: justify;">The INFINARIO web application allows you to easily create complex scenarios which you can use to send push notifications directly to your players. The following section explains how to enable receiving push notifications in the INFINARIO iOS SDK.</p>
 
