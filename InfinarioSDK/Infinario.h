@@ -8,8 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <StoreKit/StoreKit.h>
 
 @interface Infinario : NSObject
+<SKPaymentTransactionObserver, SKProductsRequestDelegate>
 
 + (id)sharedInstanceWithToken:(NSString *)token andWithTarget:(NSString *)target andWithCustomerDict:(NSMutableDictionary *)customer;
 + (id)sharedInstanceWithToken:(NSString *)token andWithTarget:(NSString *)target andWithCustomer:(NSString *)customer;
@@ -29,6 +31,8 @@
 - (void)track:(NSString *)type withProperties:(NSDictionary *)properties;
 - (void)track:(NSString *)type withTimestamp:(NSNumber *)timestamp;
 - (void)track:(NSString *)type;
+
+- (void)setSessionProperties:(NSDictionary *)properties;
 
 - (void)flush;
 

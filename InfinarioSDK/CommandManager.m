@@ -10,6 +10,7 @@
 #import "DbQueue.h"
 #import "Http.h"
 #import "Preferences.h"
+#import "Device.h"
 
 
 int const MAX_RETRIES = 50;
@@ -67,47 +68,42 @@ int const MAX_RETRIES = 50;
 
 - (void)setCookieId:(NSMutableDictionary *)command {
     if (command[@"data"] && command[@"data"][@"ids"] && ![command[@"data"][@"ids"][@"cookie"] length]) {
-        command[@"data"][@"ids"][@"cookie"] = [self.preferences objectForKey:@"cookie"];
+        command[@"data"][@"ids"][@"cookie"] = [self.preferences objectForKey:@"campaignCookie"];
     }
     
     if (command[@"data"] && command[@"data"][@"customer_ids"] && ![command[@"data"][@"customer_ids"][@"cookie"] length]) {
-        command[@"data"][@"customer_ids"][@"cookie"] = [self.preferences objectForKey:@"cookie"];
+        command[@"data"][@"customer_ids"][@"cookie"] = [self.preferences objectForKey:@"campaignCookie"];
     }
 }
 
 - (BOOL)ensureCookieId {
-    NSString *cookie = [self.preferences objectForKey:@"cookie" withDefault:@""];
+    NSString *campaignCookie = [self.preferences objectForKey:@"campaignCookie" withDefault:@""];
     
-    if ([cookie isEqualToString:@""]) {
-        [self.preferences setObject:@"negotiating" forKey:@"cookie"];
-        
+    if ([campaignCookie isEqualToString:@""]) {
         CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
-        cookie = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+        campaignCookie = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
         CFRelease(uuid);
         
         NSDictionary *response = [self.http post:@"crm/customers/track" withPayload:@{
-            @"ids": @{@"cookie": cookie},
+            @"ids": @{@"cookie": campaignCookie},
             @"project_id": self.token,
-            @"device": @{
-                @"os_name": @"iOS",
-                @"os_version": [[UIDevice currentDevice] systemVersion],
-                @"device_model": [[UIDevice currentDevice] model]
-            }
+            @"device": [Device deviceProperties]
         }];
         
         if (response) {
-            cookie = response[@"data"][@"ids"][@"cookie"];
+            campaignCookie = response[@"data"][@"ids"][@"cookie"];
             NSLog(@"Negotiated cookie id");
-            [self.preferences setObject:cookie forKey:@"cookie"];
+            [self.preferences setObject:campaignCookie forKey:@"campaignCookie"];
+            
+            NSString *cookie = [self.preferences objectForKey:@"cookie" withDefault:@""];
+            
+            if ([cookie isEqualToString:@""]) {
+                [self.preferences setObject:campaignCookie forKey:@"cookie"];
+            }
             
             return YES;
         }
         
-        [self.preferences removeObjectForKey:@"cookie"];
-        
-        return NO;
-    }
-    else if ([cookie isEqualToString:@"negotiating"]) {
         return NO;
     }
     

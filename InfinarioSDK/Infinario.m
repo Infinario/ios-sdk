@@ -12,6 +12,8 @@
 #import "Event.h"
 #import "CommandManager.h"
 #import "Http.h"
+#import "Session.h"
+#import "Device.h"
 
 int const FLUSH_COUNT = 50;
 double const FLUSH_DELAY = 10.0;
@@ -28,6 +30,8 @@ double const FLUSH_DELAY = 10.0;
 @property (nonatomic) BOOL automaticFlushing;
 @property NSTimer *flushTimer;
 @property UIBackgroundTaskIdentifier task;
+@property Session *session;
+@property NSDictionary *customSessionProperties;
 
 @end
 
@@ -44,10 +48,14 @@ double const FLUSH_DELAY = 10.0;
     
     self.identified = NO;
     self.customer = nil;
+    self.session = nil;
     self.commandCounter = FLUSH_COUNT;
     self.task = UIBackgroundTaskInvalid;
+    self.sessionProperties = @{};
     
     _automaticFlushing = [[self.preferences objectForKey:@"automatic_flushing" withDefault:@YES] boolValue];
+    
+    [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
     
     if (customer) [self identifyWithCustomerDict:customer];
     
@@ -99,8 +107,14 @@ double const FLUSH_DELAY = 10.0;
 - (void)identifyWithCustomerDict:(NSMutableDictionary *)customer andUpdate:(NSDictionary *)properties {
     customer[@"cookie"] = [self getCookie];
     
-    self.customer = customer;
-    self.identified = YES;
+    if (self.session) {
+        [self.session restart:customer];
+    }
+    else {
+        self.customer = customer;
+        self.identified = YES;
+        [self setupSession];
+    }
     
     if (properties) [self update:properties];
 }
@@ -155,12 +169,18 @@ double const FLUSH_DELAY = 10.0;
     [self track:type withProperties:nil withTimestamp:nil];
 }
 
+- (void)setSessionProperties:(NSDictionary *)properties {
+    self.customSessionProperties = properties;
+}
+
 - (void)flush {
     [self ensureBackgroundTask];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [self.commandManager flush];
-        [self ensureBackgroundTaskFinished];
+        @synchronized(self.commandManager) {
+            [self.commandManager flush];
+            [self ensureBackgroundTaskFinished];
+        }
     });
 }
 
@@ -183,13 +203,7 @@ double const FLUSH_DELAY = 10.0;
 }
 
 - (NSString *)getCookie {
-    NSString *cookie = [self.preferences objectForKey:@"cookie"];
-
-    if (!cookie || [cookie isEqualToString:@"negotiating"]) {
-        return @"";
-    }
-    
-    return cookie;
+    return [self.preferences objectForKey:@"cookie" withDefault:@""];
 }
 
 - (void)setupDelayedFlush {
@@ -248,6 +262,77 @@ double const FLUSH_DELAY = 10.0;
     NSString *stringToken = [[token description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     stringToken = [stringToken stringByReplacingOccurrencesOfString:@" " withString:@""];
     [self update:@{@"__ios_device_token": stringToken}];
+}
+
+- (void)setupSession {
+    self.session = [[Session alloc] initWithPreferences:self.preferences];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionStart:) name:@"SessionStart" object:self.session];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionEnd:) name:@"SessionEnd" object:self.session];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRestart:) name:@"SessionRestart" object:self.session];
+    
+    [self.session run];
+}
+
+- (void)sessionStart:(NSNotification *) notification {
+    NSMutableDictionary *properties = [Device deviceProperties];
+    [properties addEntriesFromDictionary:self.customSessionProperties];
+    
+    [self track:@"session_start" withProperties:properties withTimestamp:notification.userInfo[@"timestamp"]];
+}
+
+- (void)sessionEnd:(NSNotification *) notification {
+    NSMutableDictionary *properties = [Device deviceProperties];
+    properties[@"duration"] = notification.userInfo[@"duration"];
+    [properties addEntriesFromDictionary:self.customSessionProperties];
+    
+    [self track:@"session_end" withProperties:properties withTimestamp:notification.userInfo[@"timestamp"]];
+}
+
+- (void)sessionRestart:(NSNotification *) notification {
+    self.customer = notification.userInfo[@"customer"];
+}
+
+- (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    for (SKProduct *product in response.products) {
+        //NSLog(@"Infinario: tracking hard purchase %@", [product productIdentifier]);
+        
+        NSMutableDictionary *properties = [Device deviceProperties];
+        
+        properties[@"brutto"] = product.price;
+        properties[@"item_id"] = product.productIdentifier;
+        properties[@"item_title"] = product.localizedTitle;
+        properties[@"currency"] = @"";
+        
+        [self track:@"hard_purchase" withProperties:properties];
+    }
+}
+
+- (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
+    NSMutableSet *products = [NSMutableSet setWithCapacity:transactions.count];
+    
+    for (SKPaymentTransaction *transaction in transactions) {
+        switch (transaction.transactionState) {
+            case SKPaymentTransactionStatePurchased:
+                //NSLog(@"Infinario: an item has been bought: %@", [[transaction payment] productIdentifier]);
+                [products addObject:[[transaction payment] productIdentifier]];
+                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                break;
+                
+            case SKPaymentTransactionStateFailed:
+                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    if (products.count > 0 && [SKPaymentQueue canMakePayments]) {
+        SKProductsRequest *request = [[SKProductsRequest alloc] initWithProductIdentifiers:products];
+        request.delegate = self;
+        [request start];
+    }
 }
 
 @end

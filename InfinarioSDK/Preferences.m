@@ -56,8 +56,10 @@
 
 - (void)setObject:(id)value forKey:(NSString *)key {
     if (value && key) {
-        [self.prefs setValue:value forKey:key];
-        [self save:self.prefs];
+        @synchronized(self) {
+            [self.prefs setValue:value forKey:key];
+            [self save:self.prefs];
+        }
     }
 }
 

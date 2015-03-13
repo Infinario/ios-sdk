@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E8457D621AB187E7006BB298 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = E8457D601AB187E7006BB298 /* Device.h */; };
+		E8457D631AB187E7006BB298 /* Device.m in Sources */ = {isa = PBXBuildFile; fileRef = E8457D611AB187E7006BB298 /* Device.m */; };
+		E8457D661AB191DB006BB298 /* Session.h in Headers */ = {isa = PBXBuildFile; fileRef = E8457D641AB191DB006BB298 /* Session.h */; };
+		E8457D671AB191DB006BB298 /* Session.m in Sources */ = {isa = PBXBuildFile; fileRef = E8457D651AB191DB006BB298 /* Session.m */; };
 		E8843C011A83613900AFD411 /* CommandManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E8843BFF1A83613900AFD411 /* CommandManager.h */; };
 		E8843C021A83613900AFD411 /* CommandManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E8843C001A83613900AFD411 /* CommandManager.m */; };
 		E8843C051A83654100AFD411 /* Command.h in Headers */ = {isa = PBXBuildFile; fileRef = E8843C031A83654100AFD411 /* Command.h */; };
@@ -42,6 +46,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E8457D601AB187E7006BB298 /* Device.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		E8457D611AB187E7006BB298 /* Device.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Device.m; sourceTree = "<group>"; };
+		E8457D641AB191DB006BB298 /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Session.h; sourceTree = "<group>"; };
+		E8457D651AB191DB006BB298 /* Session.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Session.m; sourceTree = "<group>"; };
 		E8843BFF1A83613900AFD411 /* CommandManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandManager.h; sourceTree = "<group>"; };
 		E8843C001A83613900AFD411 /* CommandManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandManager.m; sourceTree = "<group>"; };
 		E8843C031A83654100AFD411 /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
@@ -131,6 +139,10 @@
 				E8843C081A839CDA00AFD411 /* Customer.m */,
 				E8843C0B1A839E7100AFD411 /* Event.h */,
 				E8843C0C1A839E7100AFD411 /* Event.m */,
+				E8457D601AB187E7006BB298 /* Device.h */,
+				E8457D611AB187E7006BB298 /* Device.m */,
+				E8457D641AB191DB006BB298 /* Session.h */,
+				E8457D651AB191DB006BB298 /* Session.m */,
 			);
 			path = InfinarioSDK;
 			sourceTree = "<group>";
@@ -176,7 +188,9 @@
 				E8843C091A839CDA00AFD411 /* Customer.h in Headers */,
 				E8843C0D1A839E7100AFD411 /* Event.h in Headers */,
 				E8843C051A83654100AFD411 /* Command.h in Headers */,
+				E8457D621AB187E7006BB298 /* Device.h in Headers */,
 				E8F14D0F1A826BF2009B034A /* Preferences.h in Headers */,
+				E8457D661AB191DB006BB298 /* Session.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +294,8 @@
 				E8F14CAD1A820BB9009B034A /* Http.m in Sources */,
 				E8F14CC51A8210D2009B034A /* Infinario.m in Sources */,
 				E8F14D031A821E69009B034A /* DbManager.m in Sources */,
+				E8457D631AB187E7006BB298 /* Device.m in Sources */,
+				E8457D671AB191DB006BB298 /* Session.m in Sources */,
 				E8843C0E1A839E7100AFD411 /* Event.m in Sources */,
 				E8843C061A83654100AFD411 /* Command.m in Sources */,
 				E8F14D071A821EEA009B034A /* DbQueue.m in Sources */,
