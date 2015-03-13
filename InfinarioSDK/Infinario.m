@@ -116,6 +116,14 @@ double const FLUSH_DELAY = 10.0;
         [self setupSession];
     }
     
+    NSMutableDictionary *identificationProperties = [Device deviceProperties];
+    
+    if (customer[@"registered"] && ![customer[@"registered"] isEqualToString:@""]) {
+        identificationProperties[@"registered"] = customer[@"registered"];
+    }
+    
+    [self track:@"identification" withProperties:identificationProperties];
+    
     if (properties) [self update:properties];
 }
 

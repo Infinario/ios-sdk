@@ -107,6 +107,12 @@ int const MAX_RETRIES = 50;
         return NO;
     }
     
+    NSString *cookie = [self.preferences objectForKey:@"cookie" withDefault:@""];
+    
+    if ([cookie isEqualToString:@""]) {
+        [self.preferences setObject:campaignCookie forKey:@"cookie"];
+    }
+    
     return YES;
 }
 
