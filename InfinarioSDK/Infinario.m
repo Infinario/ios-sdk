@@ -57,7 +57,11 @@ double const FLUSH_DELAY = 10.0;
     
     [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
     
-    if (customer) [self identifyWithCustomerDict:customer];
+    if (!customer){
+        customer = [NSMutableDictionary dictionary];
+    }
+    
+    [self identifyWithCustomerDict:customer];
     
     return self;
 }
