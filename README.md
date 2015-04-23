@@ -80,7 +80,7 @@ Session is a time spent in the game, it starts when the game is launched and end
   "os_name": "iOS",
   "os_version": "8.1.0",
   "sdk": "iOS SDK",
-  "sdk_version": "1.0.4"
+  "sdk_version": "1.0.5"
 }
 </code></pre>
 
@@ -99,7 +99,7 @@ Installation event is fired <strong>only once</strong> for the whole lifetime of
   "os_name": "iOS",
   "os_version": "8.1.0",
   "sdk": "iOS SDK",
-  "sdk_version": "1.0.4"
+  "sdk_version": "1.0.5"
 }
 </code></pre>
 
@@ -116,7 +116,7 @@ Identification event is tracked each time the <code>identify()</code> method is 
   "os_name": "iOS",
   "os_version": "8.1.0",
   "sdk": "iOS SDK",
-  "sdk_version": "1.0.4"
+  "sdk_version": "1.0.5"
 }
 </code></pre>
 
@@ -135,7 +135,7 @@ INFINARIO iOS SDK automatically tracks all payments made in the game as the SDK 
   "os_name": "iOS",
   "os_version": "8.1.0",
   "sdk": "iOS SDK",
-  "sdk_version": "1.0.4"
+  "sdk_version": "1.0.5"
 }
 </code></pre>
 
