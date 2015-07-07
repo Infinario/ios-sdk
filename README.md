@@ -82,6 +82,7 @@ Session is a time spent in the game, it starts when the game is launched and end
   "os_version": "8.1.0",
   "sdk": "iOS SDK",
   "sdk_version": "1.0.5"
+  "app_version": "1.0.0"
 }
 </code></pre>
 

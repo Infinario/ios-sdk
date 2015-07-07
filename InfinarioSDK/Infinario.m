@@ -279,6 +279,11 @@ double const FLUSH_DELAY = 10.0;
     NSMutableDictionary *properties = [Device deviceProperties];
     [properties addEntriesFromDictionary:self.customSessionProperties];
     
+    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    if (appVersion){
+        [properties setObject:appVersion forKey:@"app_version"];
+    }
+    
     [self track:@"session_start" withProperties:properties withTimestamp:notification.userInfo[@"timestamp"]];
 }
 
@@ -286,6 +291,11 @@ double const FLUSH_DELAY = 10.0;
     NSMutableDictionary *properties = [Device deviceProperties];
     properties[@"duration"] = notification.userInfo[@"duration"];
     [properties addEntriesFromDictionary:self.customSessionProperties];
+    
+    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    if (appVersion){
+        [properties setObject:appVersion forKey:@"app_version"];
+    }
     
     [self track:@"session_end" withProperties:properties withTimestamp:notification.userInfo[@"timestamp"]];
 }
