@@ -22,10 +22,9 @@ double const FLUSH_DELAY = 10.0;
 
 @property NSString *token;
 @property NSString *target;
-@property NSDictionary *customer;
+@property NSMutableDictionary *customer;
 @property CommandManager *commandManager;
 @property Preferences *preferences;
-@property BOOL identified;
 @property int commandCounter;
 @property (nonatomic) BOOL automaticFlushing;
 @property NSTimer *flushTimer;
@@ -46,7 +45,6 @@ double const FLUSH_DELAY = 10.0;
     self.commandManager = [[CommandManager alloc] initWithTarget:self.target andWithToken:self.token];
     self.preferences = [Preferences sharedInstance];
     
-    self.identified = NO;
     self.customer = nil;
     self.session = nil;
     self.commandCounter = FLUSH_COUNT;
@@ -61,7 +59,8 @@ double const FLUSH_DELAY = 10.0;
         customer = [NSMutableDictionary dictionary];
     }
     
-    [self identifyWithCustomerDict:customer];
+    self.customer = customer;
+    [self setupSession];
     
     return self;
 }
@@ -109,26 +108,15 @@ double const FLUSH_DELAY = 10.0;
 }
 
 - (void)identifyWithCustomerDict:(NSMutableDictionary *)customer andUpdate:(NSDictionary *)properties {
-    customer[@"cookie"] = [self getCookie];
-    
-    if (self.session) {
-        [self.session restart:customer];
-    }
-    else {
-        self.customer = customer;
-        self.identified = YES;
-        [self setupSession];
-    }
-    
-    NSMutableDictionary *identificationProperties = [Device deviceProperties];
-    
     if (customer[@"registered"] && ![customer[@"registered"] isEqualToString:@""]) {
+        NSMutableDictionary *identificationProperties = [Device deviceProperties];
         identificationProperties[@"registered"] = customer[@"registered"];
+        [self.customer setObject:customer[@"registered"] forKey:@"registered"];
+        
+        [self track:@"identification" withProperties:identificationProperties];
+        
+        if (properties) [self update:properties];
     }
-    
-    [self track:@"identification" withProperties:identificationProperties];
-    
-    if (properties) [self update:properties];
 }
 
 - (void)identifyWithCustomer:(NSString *)customer andUpdate:(NSDictionary *)properties {
@@ -145,13 +133,10 @@ double const FLUSH_DELAY = 10.0;
 
 - (void)unidentify {
     [self.preferences removeObjectForKey:@"cookie"];
-    self.identified = NO;
     self.customer = nil;
 }
 
 - (void)update:(NSDictionary *)properties {
-    if (!self.identified) [self identifyWithCustomer:nil];
-    
     Customer *customer = [[Customer alloc] initWithIds:self.customer andProjectId:self.token andWithProperties:properties];
     
     [self.commandManager schedule:customer];
@@ -160,8 +145,6 @@ double const FLUSH_DELAY = 10.0;
 }
 
 - (void)track:(NSString *)type withProperties:(NSDictionary *)properties withTimestamp:(NSNumber *)timestamp {
-    if (!self.identified) [self identifyWithCustomer:nil];
-    
     Event *event = [[Event alloc] initWithIds:self.customer andProjectId:self.token andWithType:type andWithProperties:properties andWithTimestamp:timestamp];
     
     [self.commandManager schedule:event];
