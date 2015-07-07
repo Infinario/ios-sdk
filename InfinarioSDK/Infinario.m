@@ -32,6 +32,7 @@ double const FLUSH_DELAY = 10.0;
 @property UIBackgroundTaskIdentifier task;
 @property Session *session;
 @property NSDictionary *customSessionProperties;
+@property NSString *receipt64;
 
 @end
 
@@ -300,9 +301,11 @@ double const FLUSH_DELAY = 10.0;
         NSMutableDictionary *properties = [Device deviceProperties];
         
         properties[@"gross_amount"] = product.price;
-        properties[@"item_id"] = product.productIdentifier;
-        properties[@"item_title"] = product.localizedTitle;
-        properties[@"currency"] = @"";
+        properties[@"currency"] = [product.priceLocale objectForKey:NSLocaleCurrencyCode];
+        properties[@"product_id"] = product.productIdentifier;
+        properties[@"product_title"] = product.localizedTitle;
+        properties[@"payment_system"] = @"iTunes Store";
+        properties[@"receipt"] = self.receipt64;
         
         [self track:@"payment" withProperties:properties];
     }
@@ -316,6 +319,7 @@ double const FLUSH_DELAY = 10.0;
             case SKPaymentTransactionStatePurchased:
                 //NSLog(@"Infinario: an item has been bought: %@", [[transaction payment] productIdentifier]);
                 [products addObject:[[transaction payment] productIdentifier]];
+                self.receipt64 = transaction.transactionReceipt.base64Encoding;
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
                 

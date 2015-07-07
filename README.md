@@ -128,8 +128,10 @@ INFINARIO iOS SDK automatically tracks all payments made in the game as the SDK 
 
 <pre><code>{
   "gross_amount": 0.911702,
-  "item_id": "silver.sword",
-  "item_title": "Silver sword",
+  "currency": "EUR",
+  "payment_system": "iTunes Store",
+  "product_id": "silver.sword",
+  "product_title": "Silver sword",
   "device_model": "iPhone",
   "ip": "10.0.1.58",
   "os_name": "iOS",
