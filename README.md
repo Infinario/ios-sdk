@@ -76,6 +76,7 @@ Session is a time spent in the game, it starts when the game is launched and end
 <pre><code>{
   "duration": 125,
   "device_model": "iPhone",
+  "device_type": "mobile",
   "ip": "10.0.1.58",
   "os_name": "iOS",
   "os_version": "8.1.0",
@@ -95,6 +96,7 @@ Installation event is fired <strong>only once</strong> for the whole lifetime of
   "campaign_id": "ui9fj4i93jf9083094fj9043",
   "link": "https://itunes.apple.com/us/...",
   "device_model": "iPhone",
+  "device_type": "mobile",
   "ip": "10.0.1.58",
   "os_name": "iOS",
   "os_version": "8.1.0",
@@ -112,6 +114,7 @@ Identification event is tracked each time the <code>identify()</code> method is 
 <pre><code>{
   "registered": "player@email.com",
   "device_model": "iPhone",
+  "device_type": "mobile",
   "ip": "10.0.1.58",
   "os_name": "iOS",
   "os_version": "8.1.0",
@@ -132,7 +135,8 @@ INFINARIO iOS SDK automatically tracks all payments made in the game as the SDK 
   "payment_system": "iTunes Store",
   "product_id": "silver.sword",
   "product_title": "Silver sword",
-  "device_model": "iPhone",
+  "device_model": "iPad",
+  "device_type": "tablet",
   "ip": "10.0.1.58",
   "os_name": "iOS",
   "os_version": "8.1.0",

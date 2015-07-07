@@ -23,8 +23,17 @@ NSString * const OS = @"iOS";
     properties[@"os_name"] = OS;
     properties[@"os_version"] = [[UIDevice currentDevice] systemVersion];
     properties[@"device_model"] = [[UIDevice currentDevice] model];
+    properties[@"device_type"] = [self getDeviceType];
     
     return properties;
+}
+
++ (NSString *)getDeviceType {
+    if ( [(NSString*)[UIDevice currentDevice].model hasPrefix:@"iPad"] ) {
+        return @"tablet";
+    } else {
+        return @"mobile";
+    }
 }
 
 @end
