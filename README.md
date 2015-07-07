@@ -146,6 +146,12 @@ INFINARIO iOS SDK automatically tracks all payments made in the game as the SDK 
 }
 </code></pre>
 
+<h2>Virtual payment</h2>
+
+<p>If you use virtual payments (e.g. purchase with in-game gold, coins, ...) in your project, you can track them with a call to <code>trackVirtualPayment</code>.</p>
+
+<pre><code>[infinario trackVirtualPayment:@"currency" withAmount:@3 withItemName:@"itemName" withItemType:@"itemType"];</code></pre>
+
 <h2>Push notifications</h2>
 <p style="text-align: justify;">The INFINARIO web application allows you to easily create complex scenarios which you can use to send push notifications directly to your players. The following section explains how to enable receiving push notifications in the INFINARIO iOS SDK.</p>
 

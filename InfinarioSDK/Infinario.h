@@ -31,6 +31,7 @@
 - (void)track:(NSString *)type withProperties:(NSDictionary *)properties;
 - (void)track:(NSString *)type withTimestamp:(NSNumber *)timestamp;
 - (void)track:(NSString *)type;
+- (void)trackVirtualPayment:(NSString *)currency withAmount:(NSNumber *)amount withItemName:(NSString *)itemName withItemType:(NSString *)itemType;
 
 - (void)setSessionProperties:(NSDictionary *)properties;
 

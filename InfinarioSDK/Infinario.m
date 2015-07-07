@@ -170,6 +170,17 @@ double const FLUSH_DELAY = 10.0;
     [self track:type withProperties:nil withTimestamp:nil];
 }
 
+- (void)trackVirtualPayment:(NSString *)currency withAmount:(NSNumber *)amount withItemName:(NSString *)itemName withItemType:(NSString *)itemType{
+    NSMutableDictionary *virtualPayment = [Device deviceProperties];
+    
+    [virtualPayment setObject:currency forKey:@"currency"];
+    [virtualPayment setObject:amount forKey:@"amount"];
+    [virtualPayment setObject:itemName forKey:@"item_name"];
+    [virtualPayment setObject:itemType forKey:@"item_type"];
+    
+    [self track:@"virtual_payment" withProperties:virtualPayment];
+}
+
 - (void)setSessionProperties:(NSDictionary *)properties {
     self.customSessionProperties = properties;
 }
