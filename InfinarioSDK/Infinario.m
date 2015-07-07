@@ -261,7 +261,7 @@ double const FLUSH_DELAY = 10.0;
 - (void)addPushNotificationsToken:(NSData *)token {
     NSString *stringToken = [[token description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     stringToken = [stringToken stringByReplacingOccurrencesOfString:@" " withString:@""];
-    [self update:@{@"__ios_device_token": stringToken}];
+    [self update:@{@"apple_push_notification_id": stringToken}];
 }
 
 - (void)setupSession {
@@ -299,12 +299,12 @@ double const FLUSH_DELAY = 10.0;
         
         NSMutableDictionary *properties = [Device deviceProperties];
         
-        properties[@"brutto"] = product.price;
+        properties[@"gross_amount"] = product.price;
         properties[@"item_id"] = product.productIdentifier;
         properties[@"item_title"] = product.localizedTitle;
         properties[@"currency"] = @"";
         
-        [self track:@"hard_purchase" withProperties:properties];
+        [self track:@"payment" withProperties:properties];
     }
 }
 
