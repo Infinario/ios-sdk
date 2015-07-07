@@ -12,7 +12,7 @@
 @implementation Device
 
 NSString * const SDK = @"iOS SDK";
-NSString * const SDK_VERSION = @"1.0.5";
+NSString * const SDK_VERSION = @"1.1.0";
 NSString * const OS = @"iOS";
 
 + (NSMutableDictionary *)deviceProperties {
