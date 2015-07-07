@@ -14,6 +14,7 @@
 #import "Http.h"
 #import "Session.h"
 #import "Device.h"
+#import <AdSupport/ASIdentifierManager.h>
 
 int const FLUSH_COUNT = 50;
 double const FLUSH_DELAY = 10.0;
@@ -61,6 +62,10 @@ double const FLUSH_DELAY = 10.0;
     
     self.customer = customer;
     [self setupSession];
+    
+    if ([[self getAppleAdvertisingId ] isEqualToString:@""]){
+        [self initializeAppleAdvertisingId];
+    }
     
     return self;
 }
@@ -328,6 +333,21 @@ double const FLUSH_DELAY = 10.0;
         request.delegate = self;
         [request start];
     }
+}
+
+- (NSString *)getAppleAdvertisingId{
+    return [self.preferences objectForKey:@"apple_advertising_id" withDefault:@""];
+}
+
+- (void)initializeAppleAdvertisingId{
+    NSString *advertisingId =[[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString];
+    
+    [self.preferences setObject:advertisingId forKey:@"apple_advertising_id"];
+    
+    NSMutableDictionary *properties = [NSMutableDictionary dictionary];
+    [properties setObject:advertisingId forKey:@"apple_advertising_id"];
+    
+    [self update:properties];
 }
 
 @end
