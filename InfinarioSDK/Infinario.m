@@ -181,6 +181,41 @@ double const FLUSH_DELAY = 10.0;
     [self track:@"virtual_payment" withProperties:virtualPayment];
 }
 
+- (void)trackLogDebug:(NSString *)tag withMessage:(NSString *)message{
+    [self trackLog:@"log_debug" withTag:tag withMessage:message withProperties:nil];
+}
+
+- (void)trackLogDebug:(NSString *)tag withMessage:(NSString *)message withProperties:(NSDictionary *)properties{
+    [self trackLog:@"log_debug" withTag:tag withMessage:message withProperties:properties];
+}
+
+- (void)trackLogWarning:(NSString *)tag withMessage:(NSString *)message{
+    [self trackLog:@"log_warning" withTag:tag withMessage:message withProperties:nil];
+}
+
+- (void)trackLogWarning:(NSString *)tag withMessage:(NSString *)message withProperties:(NSDictionary *)properties{
+    [self trackLog:@"log_warning" withTag:tag withMessage:message withProperties:properties];
+}
+
+- (void)trackLogError:(NSString *)tag withMessage:(NSString *)message{
+    [self trackLog:@"log_error" withTag:tag withMessage:message withProperties:nil];
+}
+
+- (void)trackLogError:(NSString *)tag withMessage:(NSString *)message withProperties:(NSDictionary *)properties{
+    [self trackLog:@"log_error" withTag:tag withMessage:message withProperties:properties];
+}
+
+- (void)trackLog:(NSString *)type withTag:(NSString *)tag withMessage:(NSString *)message withProperties:(NSDictionary *)properties{
+    NSMutableDictionary *logMessage = [[NSMutableDictionary alloc] init];
+    [logMessage setObject:tag forKey:@"tag"];
+    [logMessage setObject:message forKey:@"message"];
+    if (properties) {
+        [logMessage addEntriesFromDictionary:properties];
+    }
+    
+    [self track:type withProperties:logMessage withTimestamp:nil];
+}
+
 - (void)setSessionProperties:(NSDictionary *)properties {
     self.customSessionProperties = properties;
 }
