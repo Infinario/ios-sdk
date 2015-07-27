@@ -35,6 +35,8 @@
 
 - (void)setSessionProperties:(NSDictionary *)properties;
 
+- (void)enableAutomaticFlushing;
+- (void)disableAutomaticFlushing;
 - (void)flush;
 
 - (void)registerPushNotifications;

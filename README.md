@@ -192,3 +192,11 @@ Now you are ready to implement Push Notifications into your iOS application.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"failed obtaining token: %@", error);
 }</code></pre>
+
+<h2>Flushing events</h2>
+<p>All tracked events are stored in the internal SQL database. By default, Infinario iOS SDK automagically takes care of flushing events to the Infinario API. This feature can be turned off with method <code>disableAutomaticFlushing</code> which takes no arguments. Please be careful with turning automatic flushing off because if you turn it off, you need to manually call <code>flush</code> to flush the tracked events manually everytime there is something to flush.</p>
+<pre><code>[infinario enableAutomaticFlushing];
+
+[infinario disableAutomaticFlushing];
+[infinario flush];
+</code></pre>
