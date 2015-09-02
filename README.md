@@ -20,10 +20,10 @@ The INFINARIO iOS SDK is available at this Git repository: <a href="https://gith
 Once the IDE is set up, you may start using the INFINARIO library in your code. Firstly, you need to import main header file <strong>InfinarioSDK.h</strong> with the following code: <code>#import &lt;InfinarioSDK/InfinarioSDK.h&gt;</code>. Secondly, you need to know the URI of your INFINARIO API instance (usually <code>https://api.infinario.com</code>)and your project <code>token</code> (located on the Project management / Overview page in the web application). To interact with the INFINARIO SDK, you need to obtain a shared instance of the INFINARIO class using the project <code>token</code> (the URI parameter is optional):</p>
 
 <pre><code>// Use public Infinario instance
-Infinario *infinario = [Infinario sharedInstanceWithToken:@"your_project_token"];
+Infinario *infinario = [Infinario sharedInstanceWithToken:@"projectToken"];
 
 // Use custom Infinario instance
-Infinario *infinario = [Infinario sharedInstanceWithToken:@"your_project_token" andWithTarget:@"http://url.to.your.instance.com"];
+Infinario *infinario = [Infinario sharedInstanceWithToken:@"projectToken" andWithTarget:@"http://url.to.your.instance.com"];
 </code></pre>
 <p style="text-align: justify;">To start tracking, the customer needs to be identified with their unique <code>customerId</code>. The unique <code>customerId</code> can either be an instance of NSString, or NSDictionary representing the <code>customerIds</code> as referenced in <a href="http://guides.infinario.com/technical-guide/rest-client-api/#Detailed_key_descriptions">the API guide</a>. Setting</p>
 
@@ -77,7 +77,7 @@ Session is a real time spent in the game, it starts when the game is launched an
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    self.infinario = [Infinario sharedInstanceWithToken: @"companyToken"];
+    self.infinario = [Infinario sharedInstanceWithToken: @"projectToken"];
 
     return YES;
 }
@@ -211,7 +211,7 @@ Now you are ready to implement Push Notifications into your iOS application.
 
 <pre><code>- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // self.infinario is @property Infinario *infinario;
-    self.infinario = [Infinario sharedInstanceWithToken:@"your_token" andWithCustomer:@"some_player_id"];
+    self.infinario = [Infinario sharedInstanceWithToken:@"projectToken" andWithCustomer:@"some_player_id"];
     return YES;
 }
 
