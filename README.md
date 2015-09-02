@@ -152,6 +152,14 @@ INFINARIO iOS SDK automatically tracks all payments made in the game as the SDK 
 
 <pre><code>[infinario trackVirtualPayment:@"currency" withAmount:@3 withItemName:@"itemName" withItemType:@"itemType"];</code></pre>
 
+<h2>Segmentation</h2>
+
+<p>If you want to get current segment of your player, just call <code>getCurrentSegment</code>. You will need id of your segmentation and project secret token.</p>
+
+<pre><code>[infinario getCurrentSegment:@"segmentaionId" withProjectSecret:@"projectSecret" withCallBack:^(BOOL wasSuccessful, InfinarioSegment *segment, NSString *error) {
+    NSString *name = [segment getName];
+}];</code></pre>
+
 <h2>Push notifications</h2>
 <p style="text-align: justify;">The INFINARIO web application allows you to easily create complex scenarios which you can use to send push notifications directly to your players. The following section explains how to enable receiving push notifications in the INFINARIO iOS SDK.</p>
 

@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <StoreKit/StoreKit.h>
+#import "InfinarioSegment.h"
+
+typedef void (^onSegmentReceive) (BOOL wasSuccessful, InfinarioSegment *segment, NSString *error);
 
 @interface Infinario : NSObject
 <SKPaymentTransactionObserver, SKProductsRequestDelegate>
@@ -41,5 +44,7 @@
 
 - (void)registerPushNotifications;
 - (void)addPushNotificationsToken:(NSData *)token;
+
+- (void)getCurrentSegment:(NSString *)segmentationId withProjectSecret:(NSString *)projectSecretToken withCallBack:(onSegmentReceive)callback;
 
 @end

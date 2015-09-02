@@ -14,6 +14,7 @@
 #import "Http.h"
 #import "Session.h"
 #import "Device.h"
+#import "InfinarioSegment.h"
 #import <AdSupport/ASIdentifierManager.h>
 
 int const FLUSH_COUNT = 50;
@@ -408,6 +409,59 @@ double const FLUSH_DELAY = 10.0;
     [properties setObject:advertisingId forKey:@"apple_advertising_id"];
     
     [self update:properties];
+}
+
+- (void)getCurrentSegment:(NSString *)segmentationId withProjectSecret:(NSString *)projectSecretToken withCallBack:(onSegmentReceive)callback{
+    @try {
+        NSString *target = self.target ? target : @"https://api.infinario.com";
+        
+        if ([target hasPrefix:@"https"]) {
+            
+            NSMutableDictionary *body = [NSMutableDictionary dictionary];
+            NSMutableDictionary *ids = [NSMutableDictionary dictionary];
+    
+            [ids setObject:[self.preferences objectForKey:@"cookie" withDefault:@""] forKey:@"cookie"];
+            [ids setObject:[self.preferences objectForKey:@"registered" withDefault:@""] forKey:@"registered"];
+    
+            [body setObject:ids forKey:@"customer_ids"];
+            [body setObject:segmentationId forKey:@"analysis_id"];
+    
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", target, @"/analytics/segmentation-for"]]];
+    
+            [request setHTTPMethod:@"POST"];
+            [request setValue:@"application/json" forHTTPHeaderField:@"Content-type"];
+            [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+            [request setValue:projectSecretToken forHTTPHeaderField:@"X-Infinario-Secret"];
+    
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:body options:0 error:nil];
+    
+            [request setValue:[NSString stringWithFormat:@"%d", (int) [jsonData length]] forHTTPHeaderField:@"Content-length"];
+            [request setHTTPBody:jsonData];
+    
+            NSOperationQueue *queue = [[NSOperationQueue alloc]init];
+            [NSURLConnection sendAsynchronousRequest:request queue:queue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error){
+                                   if (error) {
+                                       callback(false, nil, @"Null response");
+                                   } else {
+                                       NSError* error;
+                                       NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+ 
+                                       if (error == nil){
+                                           callback(true, [[InfinarioSegment alloc] initWithName:[json objectForKey:@"segment"]], nil);
+                                       } else {
+                                           callback(false, nil, @"Unsucesfull response");
+                                       }
+                                   }
+            }];
+        } else {
+            callback(false, nil, @"Target must be https");
+        }
+        
+    }
+    @catch ( NSException *e ) {
+       NSLog(@"%@", e.reason);
+       callback(false, nil, e.reason);
+    }
 }
 
 @end
