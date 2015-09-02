@@ -19,6 +19,7 @@
 
 int const FLUSH_COUNT = 50;
 double const FLUSH_DELAY = 10.0;
+double const SESSION_TIMEOUT = 60.0;
 
 @interface Infinario ()
 
@@ -34,6 +35,9 @@ double const FLUSH_DELAY = 10.0;
 @property Session *session;
 @property NSDictionary *customSessionProperties;
 @property NSString *receipt64;
+@property NSObject *lockSessionAccess;
+@property NSTimer* timer;
+@property double sessionTimeOut;
 
 @end
 
@@ -44,6 +48,7 @@ double const FLUSH_DELAY = 10.0;
     
     self.token = token;
     self.target = target;
+    self.sessionTimeOut = SESSION_TIMEOUT;
     
     self.commandManager = [[CommandManager alloc] initWithTarget:self.target andWithToken:self.token];
     self.preferences = [Preferences sharedInstance];
@@ -63,7 +68,7 @@ double const FLUSH_DELAY = 10.0;
     }
     
     self.customer = customer;
-    [self setupSession];
+    self.lockSessionAccess = [[NSObject alloc] init];
     
     if ([[self getAppleAdvertisingId ] isEqualToString:@""]){
         [self initializeAppleAdvertisingId];
@@ -217,8 +222,113 @@ double const FLUSH_DELAY = 10.0;
     [self track:type withProperties:logMessage withTimestamp:nil];
 }
 
+/*
+ * Session's timestamps are saving to preferences to use them after dismiss and reopen app to continue in old session or calculate duration of session.
+ */
+
+- (void)sessionStart:(NSNumber *)timestamp {
+    [self setSessionValue:@"session_start" withTimeStamp:timestamp];
+    
+    NSMutableDictionary *properties = [Device deviceProperties];
+    [properties addEntriesFromDictionary:self.customSessionProperties];
+    
+    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    if (appVersion){
+        [properties setObject:appVersion forKey:@"app_version"];
+    }
+    
+    [self track:@"session_start" withProperties:properties withTimestamp:timestamp];
+}
+
+- (void)sessionEnd:(NSNumber *)timestamp andWithDuration:(NSNumber *)duration {
+    NSMutableDictionary *properties = [Device deviceProperties];
+    properties[@"duration"] = duration;
+    [properties addEntriesFromDictionary:self.customSessionProperties];
+    
+    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    if (appVersion){
+        [properties setObject:appVersion forKey:@"app_version"];
+    }
+    
+    [self track:@"session_end" withProperties:properties withTimestamp:timestamp];
+    
+    [self setSessionValue:@"session_end" withTimeStamp:@-1];
+    [self setSessionValue:@"session_start" withTimeStamp:@-1];
+}
+
+- (void)trackSessionStart {
+    @synchronized(self.lockSessionAccess){
+        NSNumber *now = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
+        NSNumber *sessionEnd = @([[self.preferences objectForKey:@"session_end" withDefault:@-1] intValue]);
+        NSNumber *sessionStart = @([[self.preferences objectForKey:@"session_start" withDefault:@-1] intValue]);
+        double timeOut = self.sessionTimeOut ? timeOut : SESSION_TIMEOUT;
+        
+        [self stopTimerEnd];
+        
+        if (![sessionEnd isEqualToNumber:@-1]){
+            if ([now longValue] - [sessionEnd longValue] > timeOut){
+                //Create session end
+                [self sessionEnd: sessionEnd andWithDuration:[NSNumber numberWithLong:([sessionEnd longValue] - [sessionStart longValue])]];
+                //Create session start
+                [self sessionStart: now];
+            } else {
+                //Continue in current session
+                [self setSessionValue:@"session_end" withTimeStamp:@-1];
+            }
+        } else if ([sessionStart isEqualToNumber:@-1]){
+            //Create session start
+            [self sessionStart: now];
+        } else {
+            //Continue in current session
+        }
+    }
+}
+
+- (void)trackSessionEnd {
+    @synchronized(self.lockSessionAccess){
+        //Save session_end with current timestamp and start count TIMOUT
+        [self setSessionValue:@"session_end" withTimeStamp:[NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]]];
+        [self startTimerEnd];
+    }
+}
+
+- (void)startTimerEnd{
+    [self stopTimerEnd];
+    if (self.sessionTimeOut) {
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:self.sessionTimeOut target:self selector:@selector(onTimer:) userInfo:nil repeats:NO];
+    } else {
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:SESSION_TIMEOUT target:self selector:@selector(onTimer:) userInfo:nil repeats:NO];
+    }
+    
+}
+
+- (void)stopTimerEnd{
+    if (self.timer) {
+        [self.timer invalidate];
+        self.timer = nil;
+    }
+}
+
+- (void)onTimer:(NSTimer *)timer{
+    @synchronized(self.lockSessionAccess){
+        NSNumber *sessionEnd = @([[self.preferences objectForKey:@"session_end" withDefault:@-1] intValue]);
+        NSNumber *sessionStart = @([[self.preferences objectForKey:@"session_start" withDefault:@-1] intValue]);
+        if (![sessionEnd isEqualToNumber:@-1]){
+            [self sessionEnd: sessionEnd andWithDuration:[NSNumber numberWithLong:([sessionEnd longValue] - [sessionStart longValue])]];
+        }
+    }
+}
+
+- (void)setSessionValue:(NSString *)session withTimeStamp:(NSNumber *)timestamp{
+    [self.preferences setObject:timestamp forKey:session];
+}
+
 - (void)setSessionProperties:(NSDictionary *)properties {
     self.customSessionProperties = properties;
+}
+
+- (void)setSessionTimeOut:(double)value {
+    self.sessionTimeOut = value;
 }
 
 - (void)flush {
@@ -310,45 +420,6 @@ double const FLUSH_DELAY = 10.0;
     NSString *stringToken = [[token description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     stringToken = [stringToken stringByReplacingOccurrencesOfString:@" " withString:@""];
     [self update:@{@"apple_push_notification_id": stringToken}];
-}
-
-- (void)setupSession {
-    self.session = [[Session alloc] initWithPreferences:self.preferences];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionStart:) name:@"SessionStart" object:self.session];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionEnd:) name:@"SessionEnd" object:self.session];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sessionRestart:) name:@"SessionRestart" object:self.session];
-    
-    [self.session run];
-}
-
-- (void)sessionStart:(NSNotification *) notification {
-    NSMutableDictionary *properties = [Device deviceProperties];
-    [properties addEntriesFromDictionary:self.customSessionProperties];
-    
-    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    if (appVersion){
-        [properties setObject:appVersion forKey:@"app_version"];
-    }
-    
-    [self track:@"session_start" withProperties:properties withTimestamp:notification.userInfo[@"timestamp"]];
-}
-
-- (void)sessionEnd:(NSNotification *) notification {
-    NSMutableDictionary *properties = [Device deviceProperties];
-    properties[@"duration"] = notification.userInfo[@"duration"];
-    [properties addEntriesFromDictionary:self.customSessionProperties];
-    
-    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    if (appVersion){
-        [properties setObject:appVersion forKey:@"app_version"];
-    }
-    
-    [self track:@"session_end" withProperties:properties withTimestamp:notification.userInfo[@"timestamp"]];
-}
-
-- (void)sessionRestart:(NSNotification *) notification {
-    self.customer = notification.userInfo[@"customer"];
 }
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {

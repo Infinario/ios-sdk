@@ -35,8 +35,11 @@ typedef void (^onSegmentReceive) (BOOL wasSuccessful, InfinarioSegment *segment,
 - (void)track:(NSString *)type withTimestamp:(NSNumber *)timestamp;
 - (void)track:(NSString *)type;
 - (void)trackVirtualPayment:(NSString *)currency withAmount:(NSNumber *)amount withItemName:(NSString *)itemName withItemType:(NSString *)itemType;
+- (void)trackSessionStart;
+- (void)trackSessionEnd;
 
 - (void)setSessionProperties:(NSDictionary *)properties;
+- (void)setSessionTimeOut:(double)value;
 
 - (void)enableAutomaticFlushing;
 - (void)disableAutomaticFlushing;

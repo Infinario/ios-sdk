@@ -70,7 +70,30 @@ INFINARIO iOS SDK automatically tracks some events on its own. Automatic events 
 
 <h3>Sessions</h3>
 <p>
-Session is a time spent in the game, it starts when the game is launched and ends when the game gets dismissed and is freed from memory. Automatic tracking of sessions produces two events, <code>session_start</code> and <code>session_end</code>. Both events contain the timestamp of the occurence together with basic attributes about the device (OS, OS version, SDK, SDK version and device model). Event <code>session_end</code> contains also the duration of the session in seconds. Example of <code>session_end</code> event attributes in <em>JSON</em> format:
+Session is a real time spent in the game, it starts when the game is launched and ends when the game goes to background. If the player returns to game in 60 seconds (To change TIMEOUT value, call <code>setSessionTimeOut</code>), game will continue in current session. Tracking of sessions produces two events, <code>session_start</code> and <code>session_end</code>. To track session start call <code>trackSessionStart</code> from <b>applicationDidBecomeActive</b> method and to track session end call <code>trackSessionEnd</code> from <b>applicationDidEnterBackground</b> in AppDelegate.m</p>
+<pre><code>//AppDelegate.m
+
+@property Infinario *infinario;
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Override point for customization after application launch.
+    self.infinario = [Infinario sharedInstanceWithToken: @"companyToken"];
+
+    return YES;
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [self.infinario trackSessionStart];
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    [self.infinario trackSessionEnd];
+}</code></pre>
+
+<p>Both events contain the timestamp of the occurence together with basic attributes about the device (OS, OS version, SDK, SDK version and device model). Event <code>session_end</code> contains also the duration of the session in seconds. Example of <code>session_end</code> event attributes in <em>JSON</em> format:
 </p>
 
 <pre><code>{
