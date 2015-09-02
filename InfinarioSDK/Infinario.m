@@ -77,7 +77,7 @@ double const SESSION_TIMEOUT = 60.0;
     return self;
 }
 
-+ (id)sharedInstanceWithToken:(NSString *)token andWithTarget:(NSString *)target andWithCustomerDict:(NSMutableDictionary *)customer {
++ (id)getInstance:(NSString *)token andWithTarget:(NSString *)target andWithCustomerDict:(NSMutableDictionary *)customer {
     static dispatch_once_t p = 0;
     
     __strong static id _sharedObject = nil;
@@ -89,24 +89,48 @@ double const SESSION_TIMEOUT = 60.0;
     return _sharedObject;
 }
 
++ (id)sharedInstanceWithToken:(NSString *)token andWithTarget:(NSString *)target andWithCustomerDict:(NSMutableDictionary *)customer {
+    return [self getInstance:token andWithTarget:target andWithCustomerDict:customer];
+}
+
 + (id)sharedInstanceWithToken:(NSString *)token andWithTarget:(NSString *)target andWithCustomer:(NSString *)customer {
-    return [self sharedInstanceWithToken:token andWithTarget:target andWithCustomerDict:[self customerDict:customer]];
+    return [self getInstance:token andWithTarget:target andWithCustomerDict:[self customerDict:customer]];
 }
 
 + (id)sharedInstanceWithToken:(NSString *)token andWithTarget:(NSString *)target {
-    return [self sharedInstanceWithToken:token andWithTarget:target andWithCustomerDict:nil];
+    return [self getInstance:token andWithTarget:target andWithCustomerDict:nil];
 }
 
 + (id)sharedInstanceWithToken:(NSString *)token andWithCustomerDict:(NSMutableDictionary *)customer {
-    return [self sharedInstanceWithToken:token andWithTarget:nil andWithCustomerDict:customer];
+    return [self getInstance:token andWithTarget:nil andWithCustomerDict:customer];
 }
 
 + (id)sharedInstanceWithToken:(NSString *)token andWithCustomer:(NSString *)customer {
-    return [self sharedInstanceWithToken:token andWithTarget:nil andWithCustomerDict:[self customerDict:customer]];
+    return [self getInstance:token andWithTarget:nil andWithCustomerDict:[self customerDict:customer]];
 }
 
 + (id)sharedInstanceWithToken:(NSString *)token {
-    return [self sharedInstanceWithToken:token andWithTarget:nil andWithCustomerDict:nil];
+    return [self getInstance:token andWithTarget:nil andWithCustomerDict:nil];
+}
+
++ (id)getInstance:(NSString *)token andWithTarget:(NSString *)target andWithCustomer:(NSString *)customer {
+    return [self getInstance:token andWithTarget:target andWithCustomerDict:[self customerDict:customer]];
+}
+
++ (id)getInstance:(NSString *)token andWithTarget:(NSString *)target {
+    return [self getInstance:token andWithTarget:target andWithCustomerDict:nil];
+}
+
++ (id)getInstance:(NSString *)token andWithCustomerDict:(NSMutableDictionary *)customer {
+    return [self getInstance:token andWithTarget:nil andWithCustomerDict:customer];
+}
+
++ (id)getInstance:(NSString *)token andWithCustomer:(NSString *)customer {
+    return [self getInstance:token andWithTarget:nil andWithCustomerDict:[self customerDict:customer]];
+}
+
++ (id)getInstance:(NSString *)token {
+    return [self getInstance:token andWithTarget:nil andWithCustomerDict:nil];
 }
 
 + (NSMutableDictionary *)customerDict:(NSString *)customer {
@@ -131,6 +155,14 @@ double const SESSION_TIMEOUT = 60.0;
     }
 }
 
+- (void)identify:(NSString *)customer andUpdate:(NSDictionary *)properties {
+    [self identifyWithCustomerDict:[[self class] customerDict:customer] andUpdate:properties];
+}
+
+- (void)identify:(NSString *)customer {
+    [self identify:customer andUpdate:nil];
+}
+
 - (void)identifyWithCustomer:(NSString *)customer andUpdate:(NSDictionary *)properties {
     [self identifyWithCustomerDict:[[self class] customerDict:customer] andUpdate:properties];
 }
@@ -140,8 +172,9 @@ double const SESSION_TIMEOUT = 60.0;
 }
 
 - (void)identifyWithCustomer:(NSString *)customer {
-    [self identifyWithCustomer:customer andUpdate:nil];
+    [self identify:customer andUpdate:nil];
 }
+
 
 - (void)unidentify {
     [self.preferences removeObjectForKey:@"cookie"];
