@@ -2,7 +2,7 @@
 The INFINARIO iOS SDK is available at this Git repository: <a href="https://github.com/Infinario/ios-sdk">https://github.com/Infinario/ios-sdk</a>.
 <h2>Installation</h2>
 <ol>
-	<li>Download the <a href="https://github.com/infinario/android-sdk/releases">lastest release</a> of the iOS SDK</li>
+	<li>Download the <a href="https://github.com/infinario/ios-sdk/releases">lastest release</a> of the iOS SDK</li>
 	<li>Unzip / untar the downloaded SDK into a preferred directory</li>
 	<li>Locate file <strong>InfinarioSDK.xcodeproj</strong> in the unpacked SDK directory</li>
 	<li>Drag &amp; drop the file <strong>InfinarioSDK.xcodeproj</strong> to your <strong>XCode project</strong> in <strong>Project navigator</strong></li>
