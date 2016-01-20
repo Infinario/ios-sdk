@@ -294,7 +294,7 @@ double const SESSION_TIMEOUT = 60.0;
         NSNumber *now = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
         NSNumber *sessionEnd = @([[self.preferences objectForKey:@"session_end" withDefault:@-1] intValue]);
         NSNumber *sessionStart = @([[self.preferences objectForKey:@"session_start" withDefault:@-1] intValue]);
-        double timeOut = self.sessionTimeOut ? timeOut : SESSION_TIMEOUT;
+        double timeOut = self.sessionTimeOut ? self.sessionTimeOut : SESSION_TIMEOUT;
         
         [self stopTimerEnd];
         
