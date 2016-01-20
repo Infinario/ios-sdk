@@ -37,7 +37,7 @@ double const SESSION_TIMEOUT = 60.0;
 @property NSString *receipt64;
 @property NSObject *lockSessionAccess;
 @property NSTimer* timer;
-@property double sessionTimeOut;
+@property (nonatomic) double sessionTimeOut;
 
 @end
 
@@ -361,7 +361,7 @@ double const SESSION_TIMEOUT = 60.0;
 }
 
 - (void)setSessionTimeOut:(double)value {
-    self.sessionTimeOut = value;
+    _sessionTimeOut = value;
 }
 
 - (void)flush {
