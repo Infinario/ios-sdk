@@ -1,4 +1,6 @@
 <h1 class="mtn">iOS SDK</h1>
+[![Slack Status](http://community.exponea.com/badge.svg)](https://community.exponea.com/)
+<br />
 The INFINARIO iOS SDK is available at this Git repository: <a href="https://github.com/Infinario/ios-sdk">https://github.com/Infinario/ios-sdk</a>.
 <h2>Installation</h2>
 <ol>
